@@ -6,7 +6,6 @@ Date	: 19 fevrier 2022
 Description : Fichier de distribution pour GEN145.
 ********/
 
-// test initial commit
 
 /*
  * L'anglais est utilise dans le code afin de faciliter la distinction
