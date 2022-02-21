@@ -38,8 +38,8 @@ Description : Fichier de distribution pour GEN145.
 #define OK 0
 #define ERREUR -1
 #define ERREUR_FICHIER -1
-#define ERREUR_TAILLE -2
-#define ERREUR_FORMAT -3
+#define ERREUR_TAILLE -2	// taille is the number of pixels
+#define ERREUR_FORMAT -3	// format is either P1, P2, P3
 #define IDENTIQUES 0
 #define DIFFERENTES 1
 
@@ -122,6 +122,7 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 		// getting location length
 		location = date;
 		while (first_line[location] != '\0') {
+			printf("Valeur : %d \n", location);
 			if (first_line[location] == '\0') {
 				return ERREUR;
 			}
@@ -164,6 +165,8 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 	fscanf(read_flow, "%d", p_colonnes);
 	fscanf(read_flow, "%d", p_lignes);
 	
+
+	
 	if (*p_lignes > 256 || *p_colonnes > 256)	{
 		return ERREUR_TAILLE;
 	}
@@ -172,17 +175,33 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 	fscanf(read_flow, "%d", p_maxval);
 	printf("Maxval value is : %d \n", *p_maxval);
 	
-	// Reading matrix
+	
+	
+	// Reading matrix and verifying format
+	int pixels_count = 0;
 	while(i < *p_lignes && j < *p_colonnes)	{
 		fscanf(read_flow, "%d", & matrice[i][j]);
 		//printf("%d ", matrice[i][j]);
 		j++;
+		pixels_count++;
 		
 		if (j == *p_colonnes)	{
 			j = 0;	
 			i++;
 		}
 	}
+	
+	// printing total pixels count simply lines times columns 
+	int total_pixels = (*p_colonnes)*(*p_lignes);
+	printf("Total pixels count is: %d \n", total_pixels);
+	
+	if (pixels_count != total_pixels)	{
+		return ERREUR_TAILLE;
+	}
+	
+	
+	
+	
 	
 	// closing file / freeing RAM
 	fclose(read_flow);
@@ -515,7 +534,7 @@ int ppm_lire(char nom_fichier[], struct RGB matrice[MAX_HAUTEUR][MAX_LARGEUR], i
 	
 	// verifying format make sure its color (P2)
 	fgets(file_type, 3, read_flow);
-	printf("format : %s\n", file_type);
+	//printf("Lenght of file_type is : %s\n", file_type);
 	
 	if (first_char == '#')	{
 		if (file_type[1] != '3' || file_type[0] != 'P')	{

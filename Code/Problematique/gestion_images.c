@@ -35,7 +35,7 @@ int main()
 	
 
 	// Reading file
-    //retour = pgm_lire(nom, image1, 
+    retour = pgm_lire(nom, image1, 
                       &lignes1, &colonnes1, 
                       &maxval, &metadonnees);
      
@@ -43,7 +43,7 @@ int main()
 	//pgm_copier(image1, &lignes1, &colonnes1, image2, &lignes2, &colonnes2);
 
 	// Writing file
-    //pgm_ecrire(nom, image1, 
+    pgm_ecrire(nom, image1, 
                lignes1, colonnes1, 
                maxval, metadonnees);
                
