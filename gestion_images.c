@@ -58,7 +58,9 @@ int main()
 
 
 	// Writing file
-    pgm_ecrire(nom, image1, 
+	int PGM_file = "resultatsPGM.txt";
+	//int PGM_file = "resultats.pgm";
+    pgm_ecrire(PGM_file, image1, 
                lignes1, colonnes1, 
                maxval, metadonnees);
                
@@ -75,12 +77,16 @@ int main()
     retour = ppm_lire("Sherbrooke_Frontenac_nuit_ppm.txt", imageRGB1, 
                       &lignes1, &colonnes1, 
                       &maxval, &metadonnees);
-     
+                      
+         
     // clockwise rotation (1) 
-    ppm_pivoter90(imageRGB1, &lignes1, &colonnes1, 1);
+    //ppm_pivoter90(imageRGB1, &lignes1, &colonnes1, 1);
     
 	// Writing file
-    ppm_ecrire("resultats.ppm", imageRGB1, 
+	//int PPM_file = "resultatsPPM.txt";
+	int PPM_file = "resultats.ppm";
+
+    ppm_ecrire(PPM_file, imageRGB1, 
                lignes1, colonnes1, 
                maxval, metadonnees);
     

@@ -1,4 +1,3 @@
-#Giuseppe Lomonaco;2022-02-21;Sherbrooke
 P3
 256 192
 255

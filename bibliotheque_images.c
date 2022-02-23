@@ -27,10 +27,18 @@ Description : Fichier de distribution pour GEN145.
  * *******************************************************************
  * Demander a Domingo si il faut ecrire RETURN OK; ou ecrire RETURN 0;
  * 
+ * Demander dexpliquer strncpy debut et fin...cest nebuleux...
+ * 
+ * 
+ * exemple type[4] = "P2" est ce quil compte les guillemets, le nombre de caracteres^^^
  * 
  * 
  * 
+ * expliquer le 3 dans fgets(file_type, 3, read_flow) quest ce que cest&&&
+ * ON COMPTE TJRS LE NOMBRE DE CARACTERES EN COMPTANT LE /0 !!!!
  * 
+ * 
+ * DEMANDER SI DANS LE PSEUDOCODE ON DOIT ECRIRE LES STRNCPY, STRCAT, ETC^^^
  * 
  * 
  * *******************************************************************
@@ -57,6 +65,17 @@ Description : Fichier de distribution pour GEN145.
 
 
 
+
+/*
+ * 
+ * "r" Open a text file for reading.
+ * "w" Open a text file for writing, truncating an an existing file to zero length, or creating the file if it does not exist.
+
+ * "r+" Open a text file for update (that is, for both reading and writing).
+ * "w+" Open a text file for update (reading and writing), first truncating the file to zero length if it exists or creating the file if it does not exist.
+ * 
+
+ */ 
 
 
 
@@ -103,10 +122,13 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 	char location_str[MAX_VALEUR];
 	
 	char first_char;
+	
+	// lenght of different part of the comment line
 	int author = 0;
 	int date = 0;
 	int location = 0;
 	 
+	// iterators for while loop 
 	int i = 0;
 	int j = 0;
 	 
@@ -131,28 +153,26 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 		// getting author length
 		while (first_line[author] != ';') {
 			if (first_line[author] == '\0') {
-				return ERREUR;
+				return ERREUR_FICHIER;
 			}
 			author++;
 		}
-		//printf("Author lenght is : %d \n", author);
 		
 		// getting date length
 		date = author + 1;
 		while (first_line[date] != ';') {
 			if (first_line[date] == '\0') {
-				return ERREUR;
+				return ERREUR_FICHIER;
 			}
 			date++;
 		}
-		//printf("Date lenght is : %d \n", date - author);
 		
 		// getting location length
 		location = date;
 		while (first_line[location] != '\0') {
 			//printf("Valeur : %d \n", location);
 			if (first_line[location] == '\0') {
-				return ERREUR;
+				return ERREUR_FICHIER;
 			}
 			location++;
 		}
@@ -175,6 +195,7 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 	}
 	
 	// verifying format make sure its color (P2)
+	// ICI LE 3 EST LE NOMBRE DE CARACTERES A LIRE INCLUANT LE '\0' ET NON LA POSITION
 	fgets(file_type, 3, read_flow);
 	printf("format : %s\n", file_type);
 	
@@ -187,7 +208,7 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 		return ERREUR_FORMAT;
 	}
 	
-	// Scanning lines and columns
+	// Scanning for lines and columns values
 	fscanf(read_flow, "%d", p_colonnes);
 	fscanf(read_flow, "%d", p_lignes);
 	
@@ -203,7 +224,6 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 	int pixels_count = 0;
 	while(i < *p_lignes && j < *p_colonnes)	{
 		fscanf(read_flow, "%d", & matrice[i][j]);
-		//printf("%d ", matrice[i][j]);
 		j++;
 		pixels_count++;
 		
@@ -213,11 +233,14 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 		}
 	}
 	
-	// printing total pixels count simply lines times columns 
-	int total_pixels = (*p_colonnes)*(*p_lignes);
-	printf("Total pixels count is: %d \n", total_pixels);
+	printf("Total pixels count is: %d \n", pixels_count);
 	
+	// getting total pixels from format and comparing with pixels count
+	int total_pixels = (*p_colonnes)*(*p_lignes);
 	if (pixels_count != total_pixels)	{
+		printf("Total pixels from format is : %d\n", total_pixels);
+		printf("Total pixels count is: %d \n", pixels_count);
+		printf("ERROR...\n");
 		return ERREUR_TAILLE;
 	}
 	
@@ -234,10 +257,7 @@ int pgm_ecrire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int li
 	printf("--------------------------------------------------------\n");
 	printf("***Writing File PGM***\n"); 
 	printf("--------------------------------------------------------\n");
-	
-	//nom_fichier = "resultats_pgm.txt";
-	nom_fichier = "resultats.pgm";
-	
+		
 	FILE *write_flow;
 	
 	char comments[50];	
@@ -252,6 +272,8 @@ int pgm_ecrire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int li
 	strcat(comments, metadonnees.dateCreation);
 	strcat(comments, ";");
 	strcat(comments, metadonnees.lieuCreation);
+	//strcat(comments, "\n");
+
 	fprintf(write_flow, "%s", comments);
 	printf("Comment line value is : %s \n", comments);
 	fprintf(write_flow, "%s\n", type);
@@ -735,7 +757,7 @@ int ppm_ecrire(char nom_fichier[], struct RGB matrice[MAX_HAUTEUR][MAX_LARGEUR],
 	char comments[50];	
 	char type[4] = "P3";
 		
-	if (*metadonnees.auteur != NULL)	{
+	if (*metadonnees.auteur != "")	{
 		strcpy(comments, "#");
 		strcat(comments, metadonnees.auteur);	
 	}
@@ -746,9 +768,23 @@ int ppm_ecrire(char nom_fichier[], struct RGB matrice[MAX_HAUTEUR][MAX_LARGEUR],
 	}
 		
 	if (*metadonnees.lieuCreation != NULL)	{
-		strcat(comments, ";");
-		strcat(comments, metadonnees.lieuCreation);
+			strcat(comments, ";");
+			strcat(comments, metadonnees.lieuCreation);
+			strcat(comments, "\n");
 	}
+			
+	if (comments != NULL)	{
+		// here theres no \n to prevent empty line in file
+		fprintf(write_flow, "%s", comments);
+		printf("Comment line value is : %s", comments);
+	}
+		
+	else
+	{
+		printf("No comments line\n");
+	}
+			
+
 	
 	//int comments_lenght = strlen(comments);
 	
@@ -757,16 +793,8 @@ int ppm_ecrire(char nom_fichier[], struct RGB matrice[MAX_HAUTEUR][MAX_LARGEUR],
 	//	comments = NULL;
 	//}
 			
-	if (comments != NULL)	{
-		// here theres no \n to prevent empty line in file
-		fprintf(write_flow, "%s", comments);
-		printf("Comment line value is : %s", comments);
-	}
-	else
-	{
-		printf("No comments line\n");
-	}
-		
+
+
 
 	fprintf(write_flow, "%s\n", type);
 	printf("File type is : %s \n", type);
