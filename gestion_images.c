@@ -29,15 +29,21 @@ int main()
     printf("-> Debut!\n");
 
 
-	//nom = "Sherbrooke_Frontenac_nuit_pgm.txt";
 
 
+
+
+	////////////////////////////////////////////////////////////////
+	// 		OPERATIONS POUR LES IMAGES EN NOIR ET BLANC
+	///////////////////////////////////////////////////////////////
 	
-
 	// Reading file
-    retour = pgm_lire(nom, image1, 
+    retour = pgm_lire("Sherbrooke_Frontenac_nuit_pgm.txt", image1, 
                       &lignes1, &colonnes1, 
                       &maxval, &metadonnees);
+                      
+    // clockwise rotation (1)                  
+    pgm_pivoter90(image1, &lignes1, &colonnes1, 1);
      
 	// Copying file
 	//pgm_copier(image1, &lignes1, &colonnes1, image2, &lignes2, &colonnes2);
@@ -47,19 +53,35 @@ int main()
                lignes1, colonnes1, 
                maxval, metadonnees);
                
-               
-               
-               
-               
+       
+    
+    
+    
+    
+    ////////////////////////////////////////////////////////////////
+	// 			OPERATIONS POUR LES IMAGES EN COULEUR
+	///////////////////////////////////////////////////////////////             
+           
 	// Reading file ppm
-    retour = ppm_lire(nom, image1, 
+    retour = ppm_lire("Sherbrooke_Frontenac_nuit_ppm.txt", imageRGB1, 
                       &lignes1, &colonnes1, 
                       &maxval, &metadonnees);
      
+    // clockwise rotation (1) 
+    ppm_pivoter90(imageRGB1, &lignes1, &colonnes1, 1);
+    
 	// Writing file
-    ppm_ecrire(nom, image1, 
+    ppm_ecrire("resultats.ppm", imageRGB1, 
                lignes1, colonnes1, 
-               maxval, metadonnees);           
+               maxval, metadonnees);
+    
+    ppm_sont_identiques(imageRGB1, &lignes1, &colonnes1, imageRGB2, &lignes2, &colonnes2);
+    
+
+	
+                         
+    ///////////////////////////////////////////////////////////////         
+               
                
                
                
@@ -77,5 +99,5 @@ int main()
 
     printf("-> Fin!\n");
 
-    return 0;
+    return OK;
 }
