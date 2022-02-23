@@ -3,7 +3,7 @@ Fichier	: gestion_images.c
 Auteurs	: Giuseppe Lomonaco
 		  Milan Delev
 Date   	: 19 Fevrier 2022
-Description : Solution de la problematique pour GEN145.
+Description : Problematique GEN145.
 ********/
 #ifndef BIBLIOTHEQUE_IMAGES_H
 #define BIBLIOTHEQUE_IMAGES_H

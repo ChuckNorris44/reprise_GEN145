@@ -3,7 +3,7 @@ Fichier	: bibliotheque_images.c
 Auteurs	: Giuseppe Lomonaco
 		  Milan Delev
 Date	: 19 fevrier 2022
-Description : Fichier de distribution pour GEN145.
+Description : Problematique GEN145.
 ********/
 
 
@@ -19,85 +19,9 @@ Description : Fichier de distribution pour GEN145.
 */
 
 
-
-
-/* 
- * *******************************************************************
- * 						QUESTIONS POUR DOMINGO
- * *******************************************************************
- * Demander a Domingo si il faut ecrire RETURN OK; ou ecrire RETURN 0;
- * 
- * Demander dexpliquer strncpy debut et fin...cest nebuleux...
- * 
- * 
- * exemple type[4] = "P2" est ce quil compte les guillemets, le nombre de caracteres^^^
- * 
- * 
- * 
- * expliquer le 3 dans fgets(file_type, 3, read_flow) quest ce que cest&&&
- * ON COMPTE TJRS LE NOMBRE DE CARACTERES EN COMPTANT LE /0 !!!!
- * 
- * 
- * DEMANDER SI DANS LE PSEUDOCODE ON DOIT ECRIRE LES STRNCPY, STRCAT, ETC^^^
- * 
- * 
- * *******************************************************************
-*/
-
-// running compiler in console
-// C:/MinGW/bin/gcc.exe bibliotheque_images.c gestion_images.c -o gestion_images.o
-// gestion_images.o
-
-
-
-/*
-
- // Valeurs de retour des operations
-#define OK 0
-#define ERREUR -1
-#define ERREUR_FICHIER -1
-#define ERREUR_TAILLE -2	// taille is the number of pixels
-#define ERREUR_FORMAT -3	// format is either P1, P2, P3
-#define IDENTIQUES 0
-#define DIFFERENTES 1
-
-*/
-
-
-
-
-/*
- * 
- * "r" Open a text file for reading.
- * "w" Open a text file for writing, truncating an an existing file to zero length, or creating the file if it does not exist.
-
- * "r+" Open a text file for update (that is, for both reading and writing).
- * "w+" Open a text file for update (reading and writing), first truncating the file to zero length if it exists or creating the file if it does not exist.
- * 
-
- */ 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #include "bibliotheque_images.h"
 #include <string.h>
 #include <stdio.h>
-//#include <iostream>
 
 
 ////////////////////////////////////////////////////////////////
@@ -148,12 +72,17 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 	{
 		// getting the first line data and printing
 		fgets(first_line, MAX_VALEUR, read_flow);
+		//printf("First line length is : %d\n", strlen(first_line));
+		
+		//if (strlen(first_line) > MAX_CHAINE)	{
+		//	return ERREUR_FORMAT;
+		//}
 		printf("First line is : %s \n", first_line);
 		
 		// getting author length
 		while (first_line[author] != ';') {
 			if (first_line[author] == '\0') {
-				return ERREUR_FICHIER;
+				return ERREUR_FORMAT;
 			}
 			author++;
 		}
@@ -162,7 +91,7 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 		date = author + 1;
 		while (first_line[date] != ';') {
 			if (first_line[date] == '\0') {
-				return ERREUR_FICHIER;
+				return ERREUR_FORMAT;
 			}
 			date++;
 		}
@@ -172,40 +101,67 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 		while (first_line[location] != '\0') {
 			//printf("Valeur : %d \n", location);
 			if (first_line[location] == '\0') {
-				return ERREUR_FICHIER;
+				return ERREUR_FORMAT;
 			}
 			location++;
 		}
-		printf("Location lenght is : %d \n", location - date);
+		//printf("Location lenght is : %d \n", location - date);
 	
-	// copying strings author, date and location
-	strncpy(author_str, first_line, author);
-	printf("Author value is : %s \n", author_str);
-	
-	strncpy(date_str, (first_line + author + 1), date - author - 1);
-	printf("Date value is : %s \n", date_str);
-	
-	strncpy(location_str, (first_line + date + 1), location - date - 1);
-	printf("Location value is : %s \n", location_str);
-	
-	// copying strings into metadata structure
-	strcpy(p_metadonnees->auteur, author_str);
-	strcpy(p_metadonnees->dateCreation, date_str);	
-	strcpy(p_metadonnees->lieuCreation, location_str);
+		// copying strings author, date and location
+		strncpy(author_str, first_line, author);
+		printf("Author value is : %s \n", author_str);
+		if (strlen(author_str) > MAX_CHAINE)	{
+			return ERREUR_FORMAT;
+		}
+		
+		strncpy(date_str, (first_line + author + 1), date - author - 1);
+		printf("Date value is : %s \n", date_str);
+		if (strlen(date_str) > MAX_CHAINE)	{
+			return ERREUR_FORMAT;
+		}
+		
+		strncpy(location_str, (first_line + date + 1), location - date - 1);
+		printf("Location value is : %s \n", location_str);
+		if (strlen(location_str) > MAX_CHAINE)	{
+			return ERREUR_FORMAT;
+		}
+		
+		// copying strings into metadata structure
+		if (author_str != "")	{
+			strcpy(p_metadonnees->auteur, author_str);
+		}
+
+		if (date_str != "")	{
+			strcpy(p_metadonnees->dateCreation, date_str);	
+		}
+
+		if (location != "")	{
+			strcpy(p_metadonnees->lieuCreation, location_str);
+		}
 	}
 	
+	else
+	{
+		printf("No metadata...\n");
+	}
+		
 	// verifying format make sure its color (P2)
 	// ICI LE 3 EST LE NOMBRE DE CARACTERES A LIRE INCLUANT LE '\0' ET NON LA POSITION
 	fgets(file_type, 3, read_flow);
-	printf("format : %s\n", file_type);
+	//printf("format : %s\n", file_type);
 	
 	if (first_char == '#')	{
-		if (file_type[1] != '2' || file_type[0] != 'P')	{
+		if (file_type[0] != 'P' || file_type[1] != '2')	{
 			return ERREUR_FORMAT;
 		}
-	} 
-	else if (first_char != 'P' && file_type[1] != '2')	{
+	}
+	 
+	if (first_char != 'P' && file_type[1] != '2')	{
 		return ERREUR_FORMAT;
+	}
+	
+	if (first_char != '#' && first_char != 'P')	{
+		return ERREUR_FORMAT;	
 	}
 	
 	// Scanning for lines and columns values
@@ -218,7 +174,7 @@ int pgm_lire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_l
 	
 	// Scanning max_val
 	fscanf(read_flow, "%d", p_maxval);
-	printf("Maxval value is : %d \n", *p_maxval);
+	//printf("Maxval value is : %d \n", *p_maxval);
 	
 	// Reading matrix and verifying format
 	int pixels_count = 0;
@@ -259,29 +215,48 @@ int pgm_ecrire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int li
 	printf("--------------------------------------------------------\n");
 		
 	FILE *write_flow;
-	
-	char comments[50];	
-	char type[4] = "P2";
-	
 	write_flow = fopen(nom_fichier, "w");
 	
-	// getting comment line and writing data to file
-	strcpy(comments, "#");
-	strcat(comments, metadonnees.auteur);
-	strcat(comments, ";");
-	strcat(comments, metadonnees.dateCreation);
-	strcat(comments, ";");
-	strcat(comments, metadonnees.lieuCreation);
-	//strcat(comments, "\n");
-
-	fprintf(write_flow, "%s", comments);
-	printf("Comment line value is : %s \n", comments);
+	char comments[50] = "";	
+	char type[4] = "P2";
+	
+	if (metadonnees.auteur != "")	{
+		strcat(comments, "#");
+		strcat(comments, metadonnees.auteur);	
+	}
+	else{}
+	
+	if (metadonnees.dateCreation != "")	{
+		strcat(comments, ";");
+		strcat(comments, metadonnees.dateCreation);
+	}
+	else{}
+		
+	if (metadonnees.lieuCreation != "")	{
+		strcat(comments, ";");
+		strcat(comments, metadonnees.lieuCreation);
+		strcat(comments, "\n");
+	}
+	else{}
+			
+	if (comments != "")	{
+		// here theres no \n to prevent empty line in file
+		fprintf(write_flow, "%s", comments);
+		printf("Comment line value is : %s", comments);
+	}
+		
+	else
+	{
+		printf("No comments line\n");
+	}
+	
+	
 	fprintf(write_flow, "%s\n", type);
-	printf("File type is : %s \n", type);
+	//printf("File type is : %s \n", type);
 	fprintf(write_flow, "%d %d\n", colonnes, lignes);
 	//printf("%d %d\n", colonnes, lignes);
 	fprintf(write_flow, "%d\n", maxval);
-	printf("Max value is : %d \n", maxval);
+	//printf("Max value is : %d \n", maxval);
 	
 	for (int i = 0; i < lignes; i++) {
 		for (int j = 0; j < colonnes; j++) {
@@ -291,9 +266,9 @@ int pgm_ecrire(char nom_fichier[], int matrice[MAX_HAUTEUR][MAX_LARGEUR], int li
     fprintf(write_flow, "\n");
 	}
   
-	if (matrice[lignes - 1][colonnes - 1] == NULL) {
-		return ERREUR_TAILLE;
-	}
+	//if (matrice[lignes - 1][colonnes - 1] == NULL) {
+	//	return ERREUR_TAILLE;
+	//}
 
 	// closing file / freeing ram
 	printf("***End of pgm_ecrire()***\n\n\n\n");
@@ -339,18 +314,19 @@ int pgm_creer_histogramme(int matrice[MAX_HAUTEUR][MAX_LARGEUR], int lignes, int
 	int histo = 0;
 	
 	for (int i = 0; i < MAX_VALEUR + 1; i++)	{
-		printf("%d\n", histogramme[i]);
+		//printf("%d\n", histogramme[i]);
 		histogramme[i] = 0;
 	}
 	
 	for (int i = 0; i < lignes; i++)	{
 		for (int j = 0; j < colonnes; j++)	{
 			histo = matrice[i][j];
-			//printf("%d\n", histo);
 			histogramme[histo]++;
+			
 		}
+		//printf("%d = %d\n", histo, histogramme[histo]);
 	}
-		
+	
 	printf("***End of pgm_creer_histogramme()***\n\n\n\n");
 	return OK;
 }
@@ -461,12 +437,8 @@ int pgm_extraire(int matrice[MAX_HAUTEUR][MAX_LARGEUR], int lignes1, int colonne
 	printf("***Extracting PGM***\n");
 	printf("--------------------------------------------------------\n");
 	
-	/*
-	 * A VERIFIER
-	 * 
-	 * 
-	 * 
-	 * int largeur = colonnes2 - colonnes1 + 1;
+ 
+	 int largeur = colonnes2 - colonnes1 + 1;
   int hauteur = lignes2 - lignes1 + 1;
 
   int matricetemp[hauteur][largeur];
@@ -496,13 +468,7 @@ int pgm_extraire(int matrice[MAX_HAUTEUR][MAX_LARGEUR], int lignes1, int colonne
       matrice[i][j] = matricetemp[i][j];
     }
   }
-  return 0;
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
+
 	
 	
 	
@@ -520,8 +486,33 @@ int pgm_sont_identiques(int matrice1[MAX_HAUTEUR][MAX_LARGEUR], int lignes1, int
 	printf("***Is identical PGM***\n");
 	printf("--------------------------------------------------------\n");
 	
+	int RETURN = IDENTIQUES;
 	
+	if(lignes1 != lignes2 || colonnes1 != colonnes2)	{
+		printf("Les images ont un format differents\n");
+		return DIFFERENTES;
+	}
 	
+	else if (lignes1 == lignes2 && colonnes1 == colonnes2)
+	{
+		for (int i = 0; i < lignes1; i++)	{
+			for (int j = 0; j < colonnes1; j++)	{
+				if (matrice1[i][j] != matrice2[i][j])	{
+					printf("Les images sont differentes\n");
+					return DIFFERENTES;
+				}
+			
+			}
+		}
+	}
+	else	
+	
+	if (RETURN != DIFFERENTES && RETURN != IDENTIQUES)	{
+		printf("Il y a une erreur: NI identique, NI Differentes\n");
+		RETURN = ERREUR;
+	}
+	
+	// Quitting function
 	printf("***End of pgm_sont_identiques()***\n\n\n\n");
 	return OK;
 }
@@ -754,26 +745,29 @@ int ppm_ecrire(char nom_fichier[], struct RGB matrice[MAX_HAUTEUR][MAX_LARGEUR],
 	FILE *write_flow;
 	write_flow = fopen(nom_fichier, "w");
 	
-	char comments[50];	
+	char comments[50] = "";	
 	char type[4] = "P3";
 		
-	if (*metadonnees.auteur != "")	{
-		strcpy(comments, "#");
+	if (metadonnees.auteur != "")	{
+		strcat(comments, "#");
 		strcat(comments, metadonnees.auteur);	
 	}
+	else{}
 	
-	if (*metadonnees.dateCreation != NULL)	{
+	if (metadonnees.dateCreation != "")	{
 		strcat(comments, ";");
 		strcat(comments, metadonnees.dateCreation);
 	}
+	else{}
 		
-	if (*metadonnees.lieuCreation != NULL)	{
+	if (metadonnees.lieuCreation != "")	{
 			strcat(comments, ";");
 			strcat(comments, metadonnees.lieuCreation);
 			strcat(comments, "\n");
 	}
+	else{}
 			
-	if (comments != NULL)	{
+	if (comments != "")	{
 		// here theres no \n to prevent empty line in file
 		fprintf(write_flow, "%s", comments);
 		printf("Comment line value is : %s", comments);
@@ -865,7 +859,7 @@ int ppm_sont_identiques(struct RGB matrice1[MAX_HAUTEUR][MAX_LARGEUR], int ligne
 	
 	if(lignes1 != lignes2 || colonnes1 != colonnes2)	{
 		printf("Les images ont un format differents\n");
-		RETURN = DIFFERENTES;
+		return DIFFERENTES;
 	}
 	
 	else if (lignes1 == lignes2 && colonnes1 == colonnes2)
@@ -874,7 +868,7 @@ int ppm_sont_identiques(struct RGB matrice1[MAX_HAUTEUR][MAX_LARGEUR], int ligne
 			for (int j = 0; j < colonnes1; j++)	{
 				if (matrice1[i][j].valeurR != matrice2[i][j].valeurR || matrice1[i][j].valeurG != matrice2[i][j].valeurG || matrice1[i][j].valeurB != matrice2[i][j].valeurB)	{
 					printf("Les images sont differentes\n");
-					RETURN = DIFFERENTES;
+					return DIFFERENTES;
 				}
 			
 			}
@@ -884,7 +878,7 @@ int ppm_sont_identiques(struct RGB matrice1[MAX_HAUTEUR][MAX_LARGEUR], int ligne
 	
 	if (RETURN != DIFFERENTES && RETURN != IDENTIQUES)	{
 		printf("Il y a une erreur: NI identique, NI Differentes\n");
-		RETURN = ERREUR;
+		return ERREUR;
 	}
 	
 	// Quitting function
@@ -921,6 +915,10 @@ int ppm_pivoter90(struct RGB matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_lignes, i
 		}
 	}
 	
+	if (sens != 0 && sens != 1)	{	
+		return ERREUR;
+	}
+	
 	// clockwise rotation
 	if (sens == 1)	{
 		for (int i = 0; i < *p_colonnes; i++)	{
@@ -931,29 +929,37 @@ int ppm_pivoter90(struct RGB matrice[MAX_HAUTEUR][MAX_LARGEUR], int *p_lignes, i
 				matrice[i][j].valeurB = tempo_matrice[tempo][i].valeurB;	
 			}
 		}
-	
+		
+		// verifying matrix...failing
+		//if ((matrice[nb_columns - 1][nb_lines - 1].valeurR == NULL) || (matrice[nb_columns - 1][nb_lines - 1].valeurG == NULL) || (matrice[nb_columns - 1][nb_lines - 1].valeurB == NULL)) {
+		//	return ERREUR;
+		//}
 	}
 	
 	// counter-clockwise rotation
 	if (sens == 0)	{
 		for (int i = 0; i < *p_colonnes; i++)	{
-			for (int j = 0; j < *p_lignes; j++)	{
+			for (int j = 0; j < *p_lignes; j++)		{
 				tempo = nb_columns - i;
 				matrice[i][j].valeurR = tempo_matrice[j][tempo].valeurR;
 				matrice[i][j].valeurG = tempo_matrice[j][tempo].valeurG;
 				matrice[i][j].valeurB = tempo_matrice[j][tempo].valeurB;	
 			}
 		}
-	
+		
+		// verifying matrix...failing
+		//if ((matrice[nb_columns - 1][nb_lines - 1].valeurR == NULL) || (matrice[nb_columns - 1][nb_lines - 1].valeurG == NULL) || (matrice[nb_columns - 1][nb_lines - 1].valeurB == NULL)) {
+		//	return ERREUR;
+		//}
+		//if ((matrice[*p_colonnes - 2][*p_lignes - 2].valeurR == NULL) || (matrice[*p_colonnes - 2][*p_lignes - 2].valeurG == NULL) || (matrice[*p_colonnes - 2][*p_lignes - 2].valeurB == NULL)) {
+		//	return ERREUR;
+		//}
 	}
-	
-	if (sens != 0 && sens != 1)	{
-		return ERREUR;
-	}
-	
+
 	// changing pointers lines and columns values
 	int tempo_lines = *p_lignes;
 	int tempo_columns = *p_colonnes;
+
 	*p_lignes = tempo_columns;
 	*p_colonnes = tempo_lines;
 	
