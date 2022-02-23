@@ -26,7 +26,7 @@ int main()
 
 	int retour;
 
-    printf("-> Debut!\n");
+    printf("-> Debut!\n\n");
 
 
 
@@ -41,12 +41,21 @@ int main()
     retour = pgm_lire("Sherbrooke_Frontenac_nuit_pgm.txt", image1, 
                       &lignes1, &colonnes1, 
                       &maxval, &metadonnees);
+    
+    // Copying file
+	//pgm_copier(image1, &lignes1, &colonnes1, image2, &lignes2, &colonnes2);
+                      
+    //pgm_creer_histogramme(image2, &lignes2, &colonnes2, histogramme);
+    //printf(histogramme);       
+    
+    // Preponderante color
+    pgm_couleur_preponderante(image1, lignes1, colonnes1);  
+              
                       
     // clockwise rotation (1)                  
     pgm_pivoter90(image1, &lignes1, &colonnes1, 1);
      
-	// Copying file
-	//pgm_copier(image1, &lignes1, &colonnes1, image2, &lignes2, &colonnes2);
+
 
 	// Writing file
     pgm_ecrire(nom, image1, 
