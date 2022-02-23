@@ -314,8 +314,21 @@ int pgm_creer_histogramme(int matrice[MAX_HAUTEUR][MAX_LARGEUR], int lignes, int
 	printf("***Creating Histogramme PGM***\n");
 	printf("--------------------------------------------------------\n");
 	
+	int histo = 0;
 	
+	for (int i = 0; i < MAX_VALEUR + 1; i++)	{
+		printf("%d\n", histogramme[i]);
+		histogramme[i] = 0;
+	}
 	
+	for (int i = 0; i < lignes; i++)	{
+		for (int j = 0; j < colonnes; j++)	{
+			histo = matrice[i][j];
+			//printf("%d\n", histo);
+			histogramme[histo]++;
+		}
+	}
+		
 	printf("***End of pgm_creer_histogramme()***\n\n\n\n");
 	return OK;
 }
@@ -331,10 +344,33 @@ int pgm_couleur_preponderante(int matrice[MAX_HAUTEUR][MAX_LARGEUR], int lignes,
 	printf("***Couleur preponderante PGM***\n");
 	printf("--------------------------------------------------------\n");
 	
+	int couleur[MAX_VALEUR + 1];
+	int freq = 0;
+	int color = 0;
+	for (int i = 0; i < MAX_VALEUR + 1; i++) {
+		couleur[i] = 0;
+	}
+
+	int h = 0;
+
+	for (int i = 0; i < lignes; i++) {
+		for (int j = 0; j < colonnes; j++) {
+			h = matrice[i][j];
+			couleur[h]++;
+		}
+	}
 	
-	
+	for (int i = 0; i < MAX_VALEUR + 1; i++) {
+		if (couleur[i] > freq) {
+			freq = couleur[i];
+			color = i;
+		}
+	}
+
+	printf("La couleur preponderante est : %d\n", color);
+		
 	printf("***End of pgm_couleur_preponderante()***\n\n\n\n");
-	return OK;
+	return color;
 }
 
 
@@ -402,6 +438,49 @@ int pgm_extraire(int matrice[MAX_HAUTEUR][MAX_LARGEUR], int lignes1, int colonne
 	printf("--------------------------------------------------------\n");
 	printf("***Extracting PGM***\n");
 	printf("--------------------------------------------------------\n");
+	
+	/*
+	 * A VERIFIER
+	 * 
+	 * 
+	 * 
+	 * int largeur = colonnes2 - colonnes1 + 1;
+  int hauteur = lignes2 - lignes1 + 1;
+
+  int matricetemp[hauteur][largeur];
+  int x = 0;
+  int y = 0;
+  if (lignes1 > lignes2 || colonnes1 > colonnes2 || lignes2 > 2 || colonnes2 > 2) {
+    return -2;
+  }
+  for (int i = lignes1; i <= lignes2; i++) {
+    x = 0;
+    for (int j = colonnes1; j <= colonnes2; j++) {
+
+      matricetemp[y][x] = matrice[i][j];
+      x++;
+    }
+    y++;
+  }
+  for (int i = 0; i < * p_lignes; i++) {
+    for (int j = 0; j < * p_colonnes; j++) {
+      matrice[i][j] = 0;
+    }
+  }
+  * p_lignes = hauteur;
+  * p_colonnes = largeur;
+  for (int i = 0; i <= * p_lignes; i++) {
+    for (int j = 0; j <= * p_colonnes; j++) {
+      matrice[i][j] = matricetemp[i][j];
+    }
+  }
+  return 0;
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	
 	
